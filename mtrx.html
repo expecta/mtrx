@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MTRX</title>
+<link rel="icon" href="https://i.ibb.co/HTtBcBvk/mtrx-logo-1.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300;0,400;0,600;0,700;0,900;1,900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple:     #7B2FFF;
+    --purple-mid: #9B5FFF;
+    --purple-dim: #4A1999;
+    --violet:     #B06EFF;
+    --dark:       #080810;
+    --dark2:      #0C0C18;
+    --dark3:      #10101E;
+    --card:       #0E0E1C;
+    --card2:      #12122A;
+    --border:     rgba(123,47,255,0.2);
+    --border-hi:  rgba(123,47,255,0.6);
+    --text:       #C8C0E8;
+    --text-dim:   rgba(200,192,232,0.5);
+    --white:      #F0EEFF;
+  }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:auto; }
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+  ::-webkit-scrollbar { width:3px; }
+  ::-webkit-scrollbar-track { background:var(--dark); }
+  ::-webkit-scrollbar-thumb { background:var(--purple); border-radius:2px; }
+
+  /* CURSOR */
+  .cur { position:fixed; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); }
+  #cur-dot  { width:8px; height:8px; background:var(--purple-mid); border-radius:50%; transition:width .15s,height .15s; mix-blend-mode:screen; }
+  #cur-ring { width:32px; height:32px; border:1px solid rgba(123,47,255,.5); border-radius:50%; transition:width .2s,height .2s; }
+  body:has(a:hover) #cur-dot  { width:16px; height:16px; }
+  body:has(a:hover) #cur-ring { width:48px; height:48px; border-color:var(--purple-mid); }
+
+  /* NAV */
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:200;
+    height:68px; display:flex; align-items:center; justify-content:space-between;
+    padding:0 5%;
+    background:rgba(8,8,16,0.9);
+    backdrop-filter:blur(24px);
+    border-bottom:1px solid var(--border);
+  }
+  .nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+  .nav-logo img { height:36px; filter:drop-shadow(0 0 10px rgba(123,47,255,.7)); }
+  .nav-wordmark { font-family:'Exo 2',sans-serif; font-weight:900; font-size:18px; letter-spacing:4px; color:var(--white); }
+  .nav-links { display:flex; gap:32px; list-style:none; }
+  .nav-links a {
+    font-family:'Rajdhani',sans-serif; font-weight:600; font-size:13px;
+    letter-spacing:2.5px; text-transform:uppercase; color:var(--text-dim);
+    text-decoration:none; transition:color .2s; position:relative;
+  }
+  .nav-links a::after {
+    content:''; position:absolute; bottom:-4px; left:0; right:0; height:1px;
+    background:var(--purple-mid); transform:scaleX(0); transform-origin:left; transition:transform .25s;
+  }
+  .nav-links a:hover { color:var(--white); }
+  .nav-links a:hover::after { transform:scaleX(1); }
+  .nav-btn {
+    font-family:'Exo 2',sans-serif; font-weight:700; font-size:12px;
+    letter-spacing:3px; text-transform:uppercase; text-decoration:none; cursor:none;
+    padding:10px 28px; background:var(--purple); color:var(--white);
+    clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+    transition:all .2s; position:relative; overflow:hidden;
+  }
+  .nav-btn::before {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg,var(--purple-mid),var(--violet));
+    transform:translateX(-100%); transition:.25s; z-index:-1;
+  }
+  .nav-btn:hover::before { transform:translateX(0); }
+  .nav-btn:hover { box-shadow:0 0 20px rgba(123,47,255,.6); }
+
+  /* HERO */
+  #home {
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden; padding-top:68px;
+  }
+  .hero-bg {
+    position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse 70% 55% at 50% -10%, rgba(123,47,255,.18) 0%, transparent 65%),
+      radial-gradient(ellipse 40% 40% at 15% 80%,  rgba(100,30,220,.12) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 85% 70%,  rgba(123,47,255,.10) 0%, transparent 60%),
+      linear-gradient(180deg, var(--dark) 0%, var(--dark2) 100%);
+  }
+  .hero-grid {
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(123,47,255,.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(123,47,255,.06) 1px, transparent 1px);
+    background-size:48px 48px;
+    mask-image:radial-gradient(ellipse 90% 80% at 50% 50%, black 0%, transparent 100%);
+  }
+  .hero-lines { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+  .hero-lines::before {
+    content:''; position:absolute; left:-20%; top:30%; width:60%; height:1px;
+    background:linear-gradient(90deg, transparent, rgba(123,47,255,.4), transparent);
+    transform:rotate(-8deg); animation:lsweep 6s ease-in-out infinite;
+  }
+  .hero-lines::after {
+    content:''; position:absolute; right:-20%; top:58%; width:60%; height:1px;
+    background:linear-gradient(90deg, transparent, rgba(155,95,255,.3), transparent);
+    transform:rotate(-8deg); animation:lsweep 6s 3s ease-in-out infinite;
+  }
+  @keyframes lsweep {
+    0%,100%{ opacity:.3; transform:rotate(-8deg) translateX(0); }
+    50%{ opacity:.8; transform:rotate(-8deg) translateX(4%); }
+  }
+  .hud-tl,.hud-tr,.hud-bl,.hud-br {
+    position:absolute; width:60px; height:60px; opacity:.35;
+  }
+  .hud-tl{ top:88px; left:40px; border-top:1px solid var(--purple); border-left:1px solid var(--purple); }
+  .hud-tr{ top:88px; right:40px; border-top:1px solid var(--purple); border-right:1px solid var(--purple); }
+  .hud-bl{ bottom:40px; left:40px; border-bottom:1px solid var(--purple); border-left:1px solid var(--purple); }
+  .hud-br{ bottom:40px; right:40px; border-bottom:1px solid var(--purple); border-right:1px solid var(--purple); }
+  .hud-lbl {
+    position:absolute; font-family:'Share Tech Mono',monospace;
+    font-size:10px; letter-spacing:2px; color:rgba(123,47,255,.4); text-transform:uppercase;
+  }
+  .hud-lbl.tl{ top:92px; left:108px; }
+  .hud-lbl.tr{ top:92px; right:108px; }
+  .hud-lbl.bl{ bottom:44px; left:108px; }
+  .hud-lbl.br{ bottom:44px; right:108px; }
+
+  .hero-content {
+    position:relative; z-index:2; text-align:center;
+    max-width:860px; padding:0 24px;
+  }
+  .hero-eyebrow {
+    font-family:'Share Tech Mono',monospace; font-size:11px;
+    letter-spacing:5px; color:var(--purple-mid); margin-bottom:28px;
+    opacity:0; animation:up .8s .1s forwards;
+  }
+  .hero-eyebrow::before{ content:'// '; }
+  .hero-logo {
+    width:100px; margin-bottom:28px;
+    filter:drop-shadow(0 0 20px rgba(123,47,255,.7)) drop-shadow(0 0 50px rgba(123,47,255,.3));
+    opacity:0; animation:up .8s .3s forwards, logoG 4s 1.1s ease-in-out infinite;
+  }
+  @keyframes logoG {
+    0%,100%{ filter:drop-shadow(0 0 20px rgba(123,47,255,.7)) drop-shadow(0 0 50px rgba(123,47,255,.3)); }
+    50%     { filter:drop-shadow(0 0 30px rgba(155,95,255,.9)) drop-shadow(0 0 70px rgba(123,47,255,.5)); }
+  }
+  .hero-title {
+    font-family:'Exo 2',sans-serif; font-style:italic; font-weight:900;
+    font-size:clamp(80px,13vw,160px); line-height:.88;
+    letter-spacing:-2px; color:var(--white); margin-bottom:0;
+    opacity:0; animation:up .8s .5s forwards;
+  }
+  .hero-title .g {
+    display:block;
+    background:linear-gradient(135deg, var(--purple-mid) 0%, var(--violet) 60%, #D4A8FF 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 0 30px rgba(123,47,255,.5));
+  }
+  .hero-rule {
+    display:flex; align-items:center; gap:16px; justify-content:center;
+    margin:24px 0; opacity:0; animation:up .8s .7s forwards;
+  }
+  .hero-rule span{ height:1px; width:80px; background:linear-gradient(90deg,transparent,var(--purple)); }
+  .hero-rule span:last-child{ background:linear-gradient(90deg,var(--purple),transparent); }
+  .hero-rule p{ font-family:'Share Tech Mono',monospace; font-size:11px; letter-spacing:5px; color:var(--text-dim); text-transform:uppercase; }
+  .hero-btns {
+    display:flex; gap:16px; justify-content:center; flex-wrap:wrap;
+    opacity:0; animation:up .8s .9s forwards;
+  }
+  .btn-a {
+    font-family:'Exo 2',sans-serif; font-weight:700; font-size:12px;
+    letter-spacing:3px; text-transform:uppercase; text-decoration:none; cursor:none;
+    padding:16px 44px; background:var(--purple); color:var(--white);
+    clip-path:polygon(14px 0%,100% 0%,calc(100% - 14px) 100%,0% 100%);
+    transition:all .25s; position:relative; overflow:hidden;
+  }
+  .btn-a::before{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg,var(--purple-mid),var(--violet));
+    transform:translateX(-100%); transition:.25s; z-index:-1;
+  }
+  .btn-a:hover::before{ transform:translateX(0); }
+  .btn-a:hover{ box-shadow:0 0 30px rgba(123,47,255,.6); transform:translateY(-2px); }
+  .btn-b {
+    font-family:'Exo 2',sans-serif; font-weight:600; font-size:12px;
+    letter-spacing:3px; text-transform:uppercase; text-decoration:none; cursor:none;
+    padding:16px 44px; background:transparent; color:var(--text);
+    border:1px solid rgba(123,47,255,.4);
+    clip-path:polygon(14px 0%,100% 0%,calc(100% - 14px) 100%,0% 100%);
+    transition:all .25s;
+  }
+  .btn-b:hover{ border-color:var(--purple-mid); color:var(--white); transform:translateY(-2px); background:rgba(123,47,255,.08); }
+
+
+  @keyframes up { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fi  { to{opacity:1} }
+
+  /* SCROLL PROGRESS BAR — left edge, full height */
+  .scroll-progress-track {
+    position:fixed; left:0; top:0; bottom:0;
+    width:2px; z-index:150;
+    background:rgba(123,47,255,.08);
+  }
+  .scroll-progress-fill {
+    width:100%; height:0%;
+    background:linear-gradient(to bottom, var(--purple), var(--violet));
+    box-shadow:0 0 8px rgba(123,47,255,.6);
+    transition:height .05s linear;
+  }
+
+  /* SPONSORS */
+  .sponsors {
+    background:var(--dark2);
+    border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+    padding:36px 0; overflow:hidden;
+  }
+  .sp-label {
+    font-family:'Share Tech Mono',monospace; font-size:10px;
+    letter-spacing:4px; color:rgba(123,47,255,.4);
+    text-transform:uppercase; text-align:center; margin-bottom:28px;
+  }
+  .marquee-wrap {
+    overflow:hidden; position:relative;
+  }
+  .marquee-wrap::before, .marquee-wrap::after {
+    content:''; position:absolute; top:0; bottom:0; width:80px; z-index:2; pointer-events:none;
+  }
+  .marquee-wrap::before { left:0;  background:linear-gradient(to right, var(--dark2), transparent); }
+  .marquee-wrap::after  { right:0; background:linear-gradient(to left,  var(--dark2), transparent); }
+
+  .marquee-track {
+    display:flex; align-items:center;
+    width:max-content;
+    will-change:transform;
+  }
+  .s-item {
+    display:flex; align-items:center; justify-content:center;
+    padding:0 52px; height:48px;
+    border-right:1px solid rgba(123,47,255,.15);
+    text-decoration:none; cursor:none;
+    flex-shrink:0; white-space:nowrap;
+  }
+  .s-logo {
+    height:32px; width:auto; max-width:150px;
+    object-fit:contain;
+    filter:brightness(0) invert(1);
+    opacity:.45;
+    transition:opacity .3s, transform .3s;
+    display:block; flex-shrink:0;
+  }
+  .s-item:hover .s-logo { opacity:1; transform:scale(1.06); }
+  .s-name {
+    font-family:'Share Tech Mono',monospace; font-size:13px;
+    letter-spacing:3px; text-transform:uppercase;
+    color:rgba(255,255,255,.45); transition:color .3s;
+    display:none;
+  }
+  .s-item:hover .s-name { color:#fff; }
+
+  /* SECTIONS */
+  section{ padding:120px 6%; }
+  .sec-eye {
+    display:inline-flex; align-items:center; gap:10px;
+    font-family:'Share Tech Mono',monospace; font-size:10px;
+    letter-spacing:5px; color:var(--purple-mid); text-transform:uppercase; margin-bottom:16px;
+  }
+  .sec-eye::before{ content:''; width:28px; height:1px; background:var(--purple); }
+  .sec-eye::after { content:''; width:6px; height:6px; background:var(--purple); clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%); }
+  .sec-title {
+    font-family:'Exo 2',sans-serif; font-style:italic; font-weight:900;
+    font-size:clamp(52px,7vw,88px); line-height:.92; letter-spacing:-1px;
+    color:var(--white); margin-bottom:20px;
+  }
+  .sec-title .ac {
+    background:linear-gradient(135deg,var(--purple-mid),var(--violet));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+
+  /* ABOUT */
+  #about{ background:var(--dark); position:relative; overflow:hidden; }
+  #about::after{
+    content:''; position:absolute; right:-300px; top:-200px;
+    width:700px; height:700px;
+    background:radial-gradient(circle,rgba(123,47,255,.05) 0%,transparent 70%);
+    pointer-events:none;
+  }
+  .about-wrap {
+    max-width:1200px; margin:0 auto;
+    display:grid; grid-template-columns:1.1fr 0.9fr; gap:80px; align-items:center;
+  }
+  .about-body p { font-size:17px; font-weight:400; line-height:1.9; color:var(--text-dim); margin-bottom:18px; }
+  .about-stats { display:grid; grid-template-columns:1fr 1fr; gap:2px; }
+  .sbox {
+    background:var(--card); border:1px solid var(--border);
+    padding:34px 28px; position:relative; overflow:hidden; transition:border-color .3s;
+  }
+  .sbox::before{
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg,var(--purple),var(--violet));
+    transform:scaleX(0); transition:transform .3s;
+  }
+  .sbox:hover{ border-color:var(--border-hi); }
+  .sbox:hover::before{ transform:scaleX(1); }
+  .sbox-num {
+    font-family:'Exo 2',sans-serif; font-weight:900; font-style:italic;
+    font-size:52px; line-height:1;
+    background:linear-gradient(135deg,var(--purple-mid),var(--violet));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .sbox-lbl {
+    font-family:'Share Tech Mono',monospace; font-size:10px;
+    letter-spacing:3px; text-transform:uppercase; color:var(--text-dim); margin-top:6px;
+  }
+
+  /* PLANS */
+  #plans{ background:var(--dark2); position:relative; overflow:hidden; }
+  #plans::before{
+    content:''; position:absolute; right:-200px; bottom:-200px;
+    width:600px; height:600px;
+    background:radial-gradient(circle,rgba(123,47,255,.07) 0%,transparent 70%);
+    pointer-events:none;
+  }
+  .plans-hd{ max-width:1200px; margin:0 auto 56px; }
+  .plans-grid {
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:20px; max-width:820px; margin:0 auto;
+  }
+  .plan {
+    background:var(--card); border:1px solid var(--border);
+    padding:48px 36px; position:relative; overflow:hidden;
+    clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,0 100%);
+    transition:transform .3s, border-color .3s;
+  }
+  .plan:hover{ transform:translateY(-8px); border-color:var(--border-hi); }
+  .plan.hot{
+    border-color:var(--purple);
+    background:linear-gradient(145deg,var(--card) 0%,rgba(123,47,255,.08) 100%);
+  }
+  .plan-corner{
+    position:absolute; top:0; right:0; width:22px; height:22px;
+    background:linear-gradient(135deg,var(--purple-mid),var(--violet));
+    clip-path:polygon(100% 0,0 0,100% 100%);
+  }
+  .plan-badge {
+    display:inline-block;
+    background:linear-gradient(135deg,var(--purple),var(--violet));
+    color:#fff; font-family:'Share Tech Mono',monospace;
+    font-size:9px; letter-spacing:3px;
+    padding:4px 14px; margin-bottom:20px;
+    clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+  }
+  .plan-name {
+    font-family:'Exo 2',sans-serif; font-weight:900; font-style:italic;
+    font-size:38px; letter-spacing:1px; color:var(--white); margin-bottom:4px;
+  }
+  .plan-price {
+    font-family:'Exo 2',sans-serif; font-weight:900; font-size:48px; line-height:1;
+    background:linear-gradient(135deg,var(--purple-mid),var(--violet));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:4px;
+  }
+  .plan-price sub { font-size:16px; font-style:normal; color:var(--text-dim); -webkit-text-fill-color:var(--text-dim); vertical-align:super; }
+  .plan-hr{ height:1px; background:var(--border); margin:24px 0; }
+  .plan-ul{ list-style:none; margin-bottom:32px; }
+  .plan-ul li {
+    display:flex; align-items:center; gap:12px;
+    font-size:15px; font-weight:500; color:rgba(200,192,232,.8);
+    padding:9px 0; border-bottom:1px solid rgba(123,47,255,.06);
+  }
+  .plan-ul li::before{
+    content:''; width:7px; height:7px; flex-shrink:0;
+    background:linear-gradient(135deg,var(--purple-mid),var(--violet));
+    clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);
+  }
+  .plan-cta {
+    display:block; text-align:center;
+    font-family:'Exo 2',sans-serif; font-weight:700; font-size:12px;
+    letter-spacing:3px; text-transform:uppercase; text-decoration:none; cursor:none;
+    padding:14px;
+    clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+    transition:all .25s;
+  }
+  .plan-cta.outline{ border:1px solid rgba(123,47,255,.5); color:var(--purple-mid); }
+  .plan-cta.outline:hover{ background:rgba(123,47,255,.12); border-color:var(--purple-mid); color:var(--white); }
+  .plan-cta.solid{ background:linear-gradient(135deg,var(--purple),var(--purple-mid)); color:#fff; }
+  .plan-cta.solid:hover{ box-shadow:0 0 24px rgba(123,47,255,.5); transform:translateY(-1px); }
+
+  /* HALL OF FAME */
+  #hall-of-fame{ background:var(--dark); position:relative; }
+  .hof-hd{ max-width:1200px; margin:0 auto 56px; }
+  .hof-grid {
+    display:grid; grid-template-columns:repeat(3,1fr);
+    gap:2px; max-width:960px; margin:0 auto;
+  }
+  .player {
+    background:var(--card); border:1px solid var(--border);
+    padding:44px 20px 36px; text-align:center; text-decoration:none; display:block;
+    transition:transform .3s, border-color .3s;
+    position:relative; overflow:hidden; cursor:none;
+  }
+  .player::before{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg,rgba(123,47,255,.07) 0%,transparent 70%);
+    opacity:0; transition:opacity .3s;
+  }
+  .player:hover{ transform:translateY(-6px); border-color:var(--border-hi); }
+  .player:hover::before{ opacity:1; }
+  .p-num {
+    position:absolute; top:12px; left:16px;
+    font-family:'Share Tech Mono',monospace; font-size:10px;
+    letter-spacing:2px; color:rgba(123,47,255,.3);
+  }
+  .p-ring {
+    width:84px; height:84px; margin:0 auto 16px;
+    padding:2px;
+    background:linear-gradient(135deg,var(--purple),var(--violet));
+    border-radius:50%;
+  }
+  .p-inner { width:100%; height:100%; border-radius:50%; overflow:hidden; background:var(--dark3); }
+  .p-inner img { width:100%; height:100%; object-fit:cover; filter:grayscale(30%); transition:filter .3s; }
+  .player:hover .p-inner img{ filter:grayscale(0%); }
+  .p-name {
+    font-family:'Exo 2',sans-serif; font-weight:900; font-style:italic;
+    font-size:22px; letter-spacing:1px; color:var(--white); margin-bottom:4px;
+  }
+  .p-handle { font-family:'Share Tech Mono',monospace; font-size:11px; letter-spacing:2px; color:var(--purple-mid); opacity:.7; }
+  .p-tag {
+    display:inline-block; margin-top:12px;
+    border:1px solid rgba(123,47,255,.2); padding:3px 12px;
+    font-family:'Share Tech Mono',monospace; font-size:9px;
+    letter-spacing:2px; color:var(--text-dim); text-transform:uppercase;
+  }
+
+  /* STORE */
+  #store{ background:var(--dark2); position:relative; overflow:hidden; }
+  #store::after{
+    content:''; position:absolute; left:-200px; top:-100px;
+    width:500px; height:500px;
+    background:radial-gradient(circle,rgba(123,47,255,.05) 0%,transparent 70%);
+    pointer-events:none;
+  }
+  .store-hd{ max-width:1200px; margin:0 auto 56px; }
+  .store-grid {
+    display:grid; grid-template-columns:repeat(3,1fr);
+    gap:20px; max-width:980px; margin:0 auto;
+  }
+  .product {
+    background:var(--card); border:1px solid var(--border); overflow:hidden;
+    clip-path:polygon(0 0,calc(100% - 26px) 0,100% 26px,100% 100%,0 100%);
+    transition:transform .3s, border-color .3s; cursor:none;
+  }
+  .product:hover{ transform:translateY(-6px); border-color:var(--border-hi); }
+  .prod-img-box {
+    aspect-ratio:1; overflow:hidden;
+    background:linear-gradient(135deg,#0A0A18 0%,#0F0F24 100%);
+    display:flex; align-items:center; justify-content:center; position:relative;
+  }
+  .prod-img-box::after{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(to bottom,transparent 50%,rgba(8,8,16,.85) 100%);
+  }
+  .prod-img-box img {
+    width:65%; height:65%; object-fit:contain;
+    transition:transform .4s;
+    filter:drop-shadow(0 10px 24px rgba(0,0,0,.5));
+  }
+  .product:hover .prod-img-box img{ transform:scale(1.08) translateY(-5px); }
+  .prod-info{ padding:22px 20px; }
+  .prod-name {
+    font-family:'Exo 2',sans-serif; font-weight:900; font-style:italic;
+    font-size:22px; letter-spacing:1px; color:var(--white); margin-bottom:6px;
+  }
+  .prod-desc{ font-size:13px; color:var(--text-dim); line-height:1.5; margin-bottom:18px; }
+  .prod-row{ display:flex; align-items:center; justify-content:space-between; }
+  .prod-price {
+    font-family:'Exo 2',sans-serif; font-weight:900; font-size:22px;
+    background:linear-gradient(135deg,var(--purple-mid),var(--violet));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .prod-btn {
+    font-family:'Share Tech Mono',monospace; font-size:10px;
+    letter-spacing:2px; text-transform:uppercase; text-decoration:none; cursor:none;
+    padding:8px 18px; border:1px solid rgba(123,47,255,.5); color:var(--purple-mid);
+    clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+    transition:all .2s;
+  }
+  .prod-btn:hover{ background:var(--purple); color:#fff; border-color:var(--purple); }
+  .prod-btn.cs{ opacity:.35; pointer-events:none; }
+
+  /* DISCORD CTA */
+  .cta-section {
+    background:var(--dark); padding:100px 6%; text-align:center;
+    position:relative; overflow:hidden; border-top:1px solid var(--border);
+  }
+  .cta-section::before{
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(123,47,255,.08) 0%,transparent 70%);
+    pointer-events:none;
+  }
+  .cta-inner{ position:relative; z-index:1; }
+  .cta-title {
+    font-family:'Exo 2',sans-serif; font-style:italic; font-weight:900;
+    font-size:clamp(42px,6vw,72px); color:var(--white);
+    margin-bottom:16px; line-height:.95;
+  }
+  .cta-title span{
+    background:linear-gradient(135deg,var(--purple-mid),var(--violet));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .cta-sub{ font-size:17px; color:var(--text-dim); margin-bottom:40px; font-weight:400; }
+
+  /* FOOTER */
+  footer {
+    background:var(--dark2);
+    border-top:1px solid var(--border);
+    position:relative; overflow:hidden;
+  }
+  footer::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:1px;
+    background:linear-gradient(90deg, transparent, var(--purple), var(--violet), transparent);
+  }
+  footer::after {
+    content:''; position:absolute; top:-200px; left:50%; transform:translateX(-50%);
+    width:600px; height:400px;
+    background:radial-gradient(ellipse, rgba(123,47,255,.06) 0%, transparent 70%);
+    pointer-events:none;
+  }
+
+  .foot-main {
+    max-width:1200px; margin:0 auto;
+    padding:64px 6% 40px;
+    display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:48px;
+    position:relative; z-index:1;
+  }
+
+  /* Brand col */
+  .foot-brand {}
+  .foot-logo { display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+  .foot-logo img { height:38px; filter:drop-shadow(0 0 12px rgba(123,47,255,.5)); }
+  .foot-wm { font-family:'Exo 2',sans-serif; font-weight:900; font-size:20px; letter-spacing:4px; color:var(--white); }
+  .foot-tagline {
+    font-size:13px; color:var(--text-dim); line-height:1.8; max-width:240px; margin-bottom:28px;
+  }
+  .foot-socials { display:flex; gap:10px; }
+  .foot-social {
+    width:38px; height:38px; border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    text-decoration:none; color:var(--text-dim);
+    clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+    transition:all .25s; position:relative; overflow:hidden;
+  }
+  .foot-social::before {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg, var(--purple-dim), var(--purple));
+    opacity:0; transition:opacity .25s;
+  }
+  .foot-social:hover { border-color:var(--purple); color:var(--white); }
+  .foot-social:hover::before { opacity:1; }
+  .foot-social svg { width:16px; height:16px; position:relative; z-index:1; fill:currentColor; }
+
+  /* Link cols */
+  .foot-col-title {
+    font-family:'Share Tech Mono',monospace; font-size:9px;
+    letter-spacing:4px; text-transform:uppercase; color:var(--purple-mid);
+    margin-bottom:20px; display:flex; align-items:center; gap:8px;
+  }
+  .foot-col-title::after { content:''; flex:1; height:1px; background:var(--border); }
+  .foot-col ul { list-style:none; display:flex; flex-direction:column; gap:2px; }
+  .foot-col ul li a {
+    font-family:'Rajdhani',sans-serif; font-weight:600; font-size:14px;
+    letter-spacing:1px; color:var(--text-dim); text-decoration:none;
+    display:flex; align-items:center; gap:0px;
+    padding:7px 0; border-bottom:1px solid rgba(123,47,255,.05);
+    transition:all .22s; position:relative; overflow:hidden;
+  }
+  .foot-col ul li a .arr {
+    display:inline-block;
+    opacity:0; transform:translateX(-6px);
+    transition:all .22s; color:var(--purple-mid);
+    font-size:13px; margin-right:0; width:0; overflow:hidden;
+  }
+  .foot-col ul li a:hover { color:var(--white); padding-left:4px; border-bottom-color:rgba(123,47,255,.2); }
+  .foot-col ul li a:hover .arr { opacity:1; transform:translateX(0); width:16px; margin-right:4px; }
+
+  /* Bottom bar */
+  .foot-bottom {
+    border-top:1px solid var(--border);
+    padding:20px 6%;
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    max-width:100%; position:relative; z-index:1;
+  }
+  .foot-copy {
+    font-family:'Share Tech Mono',monospace; font-size:10px;
+    letter-spacing:2px; color:rgba(200,192,232,.2);
+  }
+  .foot-legal { display:flex; gap:20px; }
+  .foot-legal a {
+    font-family:'Share Tech Mono',monospace; font-size:10px;
+    letter-spacing:2px; color:rgba(200,192,232,.2); text-decoration:none;
+    transition:color .2s;
+  }
+  .foot-legal a:hover { color:var(--purple-mid); }
+
+  @media(max-width:900px){
+    .foot-main { grid-template-columns:1fr 1fr; gap:32px; }
+    .foot-brand { grid-column:1/-1; }
+  }
+  @media(max-width:560px){
+    .foot-main { grid-template-columns:1fr; }
+    .foot-brand { grid-column:auto; }
+  }
+
+  /* REVEAL */
+  .rv{ opacity:0; transform:translateY(36px); transition:opacity .7s ease, transform .7s ease; }
+  .rv.on{ opacity:1; transform:translateY(0); }
+
+
+
+  /* NAV ACTIVE INDICATOR — animated underline */
+  .nav-links a {
+    position:relative;
+  }
+  .nav-links a.active {
+    color:var(--violet) !important;
+  }
+  .nav-links a.active::after {
+    transform:scaleX(1) !important;
+    background:var(--violet);
+  }
+
+  /* SECTION SLIDE-IN — handled by .rv class */
+
+  /* RESPONSIVE */
+  @media(max-width:900px){
+    .about-wrap{ grid-template-columns:1fr; gap:40px; }
+    .plans-grid{ grid-template-columns:1fr; max-width:420px; }
+    .hof-grid{ grid-template-columns:repeat(2,1fr); }
+    .store-grid{ grid-template-columns:1fr 1fr; }
+    .nav-links{ display:none; }
+    .hud-tl,.hud-tr,.hud-bl,.hud-br,.hud-lbl{ display:none; }
+  }
+  @media(max-width:560px){
+    .store-grid{ grid-template-columns:1fr; }
+    body{ cursor:auto; }
+    .cur{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cur" id="cd"><div id="cur-dot"></div></div>
+<div class="cur" id="cr"><div id="cur-ring"></div></div>
+<div id="nav-flash"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#home" class="nav-logo">
+    <img src="https://i.ibb.co/HTtBcBvk/mtrx-logo-1.png" alt="MTRX">
+    <span class="nav-wordmark">MTRX</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#plans">Plans</a></li>
+    <li><a href="#hall-of-fame">Hall of Fame</a></li>
+    <li><a href="#store">Store</a></li>
+  </ul>
+  <a href="https://discord.gg/P57MjaRJW4" class="nav-btn" target="_blank">Join MTRX</a>
+</nav>
+
+<!-- HERO -->
+<section id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-lines"></div>
+  <div class="hud-tl"></div><div class="hud-tr"></div>
+  <div class="hud-bl"></div><div class="hud-br"></div>
+  <span class="hud-lbl tl">// EST. 2022</span>
+  <span class="hud-lbl tr">// FORTNITE ESPORTS</span>
+  <span class="hud-lbl bl">// MTRX GAMING</span>
+  <span class="hud-lbl br">// WHERE SKILL MEETS STRATEGY</span>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">Competitive Fortnite Esports</p>
+    <img src="https://i.ibb.co/HTtBcBvk/mtrx-logo-1.png" alt="MTRX Gaming" class="hero-logo">
+    <h1 class="hero-title">
+      MATRIX<br>
+      <span class="g">GAMING</span>
+    </h1>
+    <div class="hero-rule">
+      <span></span>
+      <p>Where Skill Meets Strategy</p>
+      <span></span>
+    </div>
+    <div class="hero-btns">
+      <a href="#plans" class="btn-a">Subscribe Now</a>
+      <a href="#about" class="btn-b">Learn More</a>
+    </div>
+  </div>
+</section>
+
+<!-- SCROLL PROGRESS BAR -->
+<div class="scroll-progress-track">
+  <div class="scroll-progress-fill" id="scrollFill"></div>
+</div>
+
+<!-- SPONSORS -->
+<div class="sponsors">
+  <p class="sp-label">// Our Partners</p>
+  <div class="marquee-wrap">
+    <div class="marquee-track" id="marqueeTrack">
+      <a href="https://stake.us/?offer=mtrx&c=UE0YnHxf" class="s-item" target="_blank">
+        <img class="s-logo" src="https://www.mtrxgaming.com/images/sponsor-stake.png" alt="Stake.us" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="s-name">Stake.us</span>
+      </a>
+      <a href="https://www.sonix.gg/" class="s-item" target="_blank">
+        <img class="s-logo" src="https://www.mtrxgaming.com/images/sponsor-sonix.png" alt="Sonix" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="s-name">Sonix</span>
+      </a>
+      <a href="https://moddedzone.com/?sca_ref=10606381.7KFytlKJa1" class="s-item" target="_blank">
+        <img class="s-logo" src="https://www.mtrxgaming.com/images/sponsor-moddedzone.png" alt="Modded Zone" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="s-name">Modded Zone</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-wrap">
+    <div class="rv">
+      <p class="sec-eye">Who We Are</p>
+      <h2 class="sec-title">About <span class="ac">MTRX</span></h2>
+      <div class="about-body">
+        <p>Matrix Gaming (MTRX) is an esports organization built on the belief that strategy meets skill. Originally established in 2022, Matrix Gaming competed in the Fortnite scene, signing notable talent including Ritual, Bhronos, BryceX, Shadow1x, Avivv, and Cooper.</p>
+        <p>Today, Matrix Gaming returns with a renewed vision — building a long-lasting organization grounded in community, integrity, and growth. Expanding across multiple platforms, fostering meaningful relationships, and creating a connected community that thrives in and out of the game.</p>
+      </div>
+    </div>
+    <div class="about-stats rv">
+      <div class="sbox"><div class="sbox-num">2022</div><div class="sbox-lbl">Founded</div></div>
+      <div class="sbox"><div class="sbox-num">6+</div><div class="sbox-lbl">Pro Players</div></div>
+      <div class="sbox"><div class="sbox-num">3</div><div class="sbox-lbl">Partners</div></div>
+      <div class="sbox"><div class="sbox-num">∞</div><div class="sbox-lbl">Community</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section id="plans">
+  <div class="plans-hd rv">
+    <p class="sec-eye">Subscriber Plans</p>
+    <h2 class="sec-title">Choose Your <span class="ac">Plan</span></h2>
+    <p style="color:var(--text-dim);font-size:17px;max-width:480px;line-height:1.7">Level up your experience with exclusive perks, content, and direct access to the MTRX team.</p>
+  </div>
+  <div class="plans-grid rv">
+    <div class="plan">
+      <div class="plan-corner"></div>
+      <div class="plan-name">Starter</div>
+      <div class="plan-price"><sub>$</sub>10<sub style="vertical-align:initial;font-size:14px;font-style:normal">/mo</sub></div>
+      <div class="plan-hr"></div>
+      <ul class="plan-ul">
+        <li>Custom Banner</li>
+        <li>Subscriber Role</li>
+        <li>Move Permissions</li>
+        <li>Hidden VC Access</li>
+      </ul>
+      <a href="https://paypal.me/MTRXGAMIN" class="plan-cta outline" target="_blank">Get Started</a>
+    </div>
+    <div class="plan hot">
+      <div class="plan-corner"></div>
+      <div class="plan-badge">Most Popular</div>
+      <div class="plan-name">Pro</div>
+      <div class="plan-price"><sub>$</sub>45<sub style="vertical-align:initial;font-size:14px;font-style:normal">/mo</sub></div>
+      <div class="plan-hr"></div>
+      <ul class="plan-ul">
+        <li>Custom Banner</li>
+        <li>Subscriber Role</li>
+        <li>Move Permissions</li>
+        <li>Hidden VC Access</li>
+        <li>Custom Thumbnail</li>
+        <li>Personal Montage</li>
+        <li>Video w/ Pro Player</li>
+      </ul>
+      <a href="https://paypal.me/MTRXGAMIN" class="plan-cta solid" target="_blank">Go Pro</a>
+    </div>
+  </div>
+</section>
+
+<!-- HALL OF FAME -->
+<section id="hall-of-fame">
+  <div class="hof-hd rv">
+    <p class="sec-eye">Legends</p>
+    <h2 class="sec-title">Hall of <span class="ac">Fame</span></h2>
+    <p style="color:var(--text-dim);font-size:17px;max-width:480px;line-height:1.7">The players who left their mark competing under the MTRX banner.</p>
+  </div>
+  <div class="hof-grid rv">
+    <a href="https://x.com/ritualfps" class="player" target="_blank">
+      <span class="p-num">01</span>
+      <div class="p-ring"><div class="p-inner"><img src="https://unavatar.io/twitter/ritualfps" alt="Ritualx"></div></div>
+      <div class="p-name">Ritualx</div><div class="p-handle">@ritualfps</div><div class="p-tag">Alumni</div>
+    </a>
+    <a href="https://x.com/bhronos" class="player" target="_blank">
+      <span class="p-num">02</span>
+      <div class="p-ring"><div class="p-inner"><img src="https://unavatar.io/twitter/bhronos" alt="Bhronos"></div></div>
+      <div class="p-name">Bhronos</div><div class="p-handle">@bhronos</div><div class="p-tag">Alumni</div>
+    </a>
+    <a href="https://x.com/shadow1x_" class="player" target="_blank">
+      <span class="p-num">03</span>
+      <div class="p-ring"><div class="p-inner"><img src="https://unavatar.io/twitter/shadow1x_" alt="Shadow1x"></div></div>
+      <div class="p-name">Shadow1x</div><div class="p-handle">@shadow1x_</div><div class="p-tag">Alumni</div>
+    </a>
+    <a href="https://x.com/avivv5" class="player" target="_blank">
+      <span class="p-num">04</span>
+      <div class="p-ring"><div class="p-inner"><img src="https://unavatar.io/twitter/avivv5" alt="Avivv"></div></div>
+      <div class="p-name">Avivv</div><div class="p-handle">@avivv5</div><div class="p-tag">Alumni</div>
+    </a>
+    <a href="https://x.com/cooperfnbr" class="player" target="_blank">
+      <span class="p-num">05</span>
+      <div class="p-ring"><div class="p-inner"><img src="https://unavatar.io/twitter/cooperfnbr" alt="Cooper"></div></div>
+      <div class="p-name">Cooper</div><div class="p-handle">@cooperfnbr</div><div class="p-tag">Alumni</div>
+    </a>
+    <a href="https://x.com/brycxfn" class="player" target="_blank">
+      <span class="p-num">06</span>
+      <div class="p-ring"><div class="p-inner"><img src="https://unavatar.io/twitter/brycxfn" alt="BryceX"></div></div>
+      <div class="p-name">BryceX</div><div class="p-handle">@brycxfn</div><div class="p-tag">Alumni</div>
+    </a>
+  </div>
+</section>
+
+<!-- STORE -->
+<section id="store">
+  <div class="store-hd rv">
+    <p class="sec-eye">Official Merch</p>
+    <h2 class="sec-title">MTRX <span class="ac">Store</span></h2>
+    <p style="color:var(--text-dim);font-size:17px;max-width:480px;line-height:1.7">Rep the team with official Matrix Gaming merchandise.</p>
+  </div>
+  <div class="store-grid rv">
+    <div class="product">
+      <div class="prod-img-box">
+        <img src="https://www.mtrxgaming.com/images/product-hoodie.png" alt="Hoodie"
+          onerror="this.parentElement.innerHTML='<div style=\'font-size:60px;line-height:1\'>👕</div>'">
+      </div>
+      <div class="prod-info">
+        <div class="prod-name">MTRX Hoodie</div>
+        <div class="prod-desc">Premium black hoodie with embroidered MTRX logo</div>
+        <div class="prod-row">
+          <div class="prod-price">$35.00</div>
+          <a href="https://www.paypal.com/paypalme/MTRXGAMIN/35" class="prod-btn" target="_blank">Buy Now</a>
+        </div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="prod-img-box">
+        <img src="https://www.mtrxgaming.com/images/product-tshirt.png" alt="Tee"
+          onerror="this.parentElement.innerHTML='<div style=\'font-size:60px;line-height:1\'>👕</div>'">
+      </div>
+      <div class="prod-info">
+        <div class="prod-name">Classic Tee</div>
+        <div class="prod-desc">Classic fit black tee with printed MTRX logo</div>
+        <div class="prod-row">
+          <div class="prod-price">$22.50</div>
+          <a href="https://www.paypal.com/paypalme/MTRXGAMIN/22.50" class="prod-btn" target="_blank">Buy Now</a>
+        </div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="prod-img-box">
+        <img src="https://www.mtrxgaming.com/images/product-plushie.png" alt="Plushie"
+          onerror="this.parentElement.innerHTML='<div style=\'font-size:60px;line-height:1\'>🧸</div>'">
+      </div>
+      <div class="prod-info">
+        <div class="prod-name">MTRX Plushie</div>
+        <div class="prod-desc">Limited edition MTRX collectible plushie</div>
+        <div class="prod-row">
+          <div class="prod-price">$35.00</div>
+          <span class="prod-btn cs">Coming Soon</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DISCORD CTA -->
+<div class="cta-section">
+  <div class="cta-inner rv">
+    <h2 class="cta-title">Join the<br><span>MTRX Community</span></h2>
+    <p class="cta-sub">Connect with the team, participate in events, and be part of the movement.</p>
+    <a href="https://discord.gg/P57MjaRJW4" class="btn-a" target="_blank">Join Our Discord</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-main">
+
+    <!-- Brand -->
+    <div class="foot-brand">
+      <div class="foot-logo">
+        <img src="https://i.ibb.co/HTtBcBvk/mtrx-logo-1.png" alt="MTRX">
+        <span class="foot-wm">MTRX</span>
+      </div>
+      <p class="foot-tagline">Competitive Fortnite esports organization. Where skill meets strategy.</p>
+      <div class="foot-socials">
+        <!-- X / Twitter -->
+        <a href="https://x.com/mtrxgaming" target="_blank" class="foot-social" title="X / Twitter">
+          <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.742l7.727-8.835L1.254 2.25H8.08l4.253 5.622 5.912-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <!-- Discord -->
+        <a href="https://discord.gg/P57MjaRJW4" target="_blank" class="foot-social" title="Discord">
+          <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+        </a>
+        <!-- TikTok -->
+        <a href="https://www.tiktok.com/@mtrxgaming" target="_blank" class="foot-social" title="TikTok">
+          <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.76a4.85 4.85 0 0 1-1.01-.07z"/></svg>
+        </a>
+        <!-- YouTube -->
+        <a href="https://www.youtube.com/@mtrxgaming" target="_blank" class="foot-social" title="YouTube">
+          <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="foot-col">
+      <div class="foot-col-title">Navigate</div>
+      <ul>
+        <li><a href="#home"><span class="arr">›</span>Home</a></li>
+        <li><a href="#about"><span class="arr">›</span>About</a></li>
+        <li><a href="#plans"><span class="arr">›</span>Plans</a></li>
+        <li><a href="#hall-of-fame"><span class="arr">›</span>Hall of Fame</a></li>
+        <li><a href="#store"><span class="arr">›</span>Store</a></li>
+      </ul>
+    </div>
+
+    <!-- Community -->
+    <div class="foot-col">
+      <div class="foot-col-title">Community</div>
+      <ul>
+        <li><a href="https://discord.gg/P57MjaRJW4" target="_blank"><span class="arr">›</span>Discord Server</a></li>
+        <li><a href="https://x.com/mtrxgaming" target="_blank"><span class="arr">›</span>Follow on X</a></li>
+        <li><a href="https://www.tiktok.com/@mtrxgaming" target="_blank"><span class="arr">›</span>TikTok</a></li>
+        <li><a href="https://www.youtube.com/@mtrxgaming" target="_blank"><span class="arr">›</span>YouTube</a></li>
+      </ul>
+    </div>
+
+    <!-- Partners -->
+    <div class="foot-col">
+      <div class="foot-col-title">Partners</div>
+      <ul>
+        <li><a href="https://stake.us/?offer=mtrx&c=UE0YnHxf" target="_blank"><span class="arr">›</span>Stake.us</a></li>
+        <li><a href="https://www.sonix.gg/" target="_blank"><span class="arr">›</span>Sonix</a></li>
+        <li><a href="https://moddedzone.com/?sca_ref=10606381.7KFytlKJa1" target="_blank"><span class="arr">›</span>Modded Zone</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="foot-bottom">
+    <p class="foot-copy">© 2026 Matrix Gaming. All rights reserved.</p>
+    <div class="foot-legal">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Cursor
+  const dot=document.getElementById('cd'), ring=document.getElementById('cr');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  (function tick(){
+    dot.style.left=mx+'px'; dot.style.top=my+'px';
+    rx+=(mx-rx)*.13; ry+=(my-ry)*.13;
+    ring.style.left=rx+'px'; ring.style.top=ry+'px';
+    requestAnimationFrame(tick);
+  })();
+
+  // Scroll reveal
+  const rvEls=document.querySelectorAll('.rv');
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach((e,i)=>{
+      if(e.isIntersecting){ setTimeout(()=>e.target.classList.add('on'),i*60); io.unobserve(e.target); }
+    });
+  },{threshold:.05, rootMargin:'0px 0px -40px 0px'});
+  rvEls.forEach(el=>io.observe(el));
+
+  // ── SMOOTH NAV SCROLL with easing ──
+  const navFlash = document.getElementById('nav-flash');
+
+  function easeInOutQuart(t) {
+    return t < 0.5 ? 8*t*t*t*t : 1 - Math.pow(-2*t+2, 4)/2;
+  }
+  function smoothScrollTo(targetY, duration) {
+    const startY = window.scrollY;
+    const dist = targetY - startY;
+    let start = null;
+    function step(ts) {
+      if (!start) start = ts;
+      const elapsed = ts - start;
+      const progress = Math.min(elapsed / duration, 1);
+      window.scrollTo(0, startY + dist * easeInOutQuart(progress));
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function triggerFlash() {}
+
+  // Intercept ALL anchor clicks (nav + footer)
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', e => {
+      const id = link.getAttribute('href').slice(1);
+      const target = document.getElementById(id);
+      if (!target) return;
+      e.preventDefault();
+      smoothScrollTo(target.getBoundingClientRect().top + window.scrollY - 68, 900);
+      document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+      link.classList.add('active');
+    });
+  });
+
+  // ── BULLETPROOF INFINITE MARQUEE ──
+  (function() {
+    const track = document.getElementById('marqueeTrack');
+    if (!track) return;
+
+    // Clone the original set enough times to always fill the screen
+    const original = Array.from(track.children);
+    // Add 6 cloned sets so it's always wider than any screen
+    for (let i = 0; i < 6; i++) {
+      original.forEach(el => track.appendChild(el.cloneNode(true)));
+    }
+
+    const speed = 0.6; // px per frame
+    let x = 0;
+    let paused = false;
+
+    track.addEventListener('mouseenter', () => paused = true);
+    track.addEventListener('mouseleave', () => paused = false);
+
+    // Measure one "set" width after layout
+    let setWidth = 0;
+    function measureSet() {
+      // Width of the original items (first N children)
+      setWidth = original.reduce((sum, el) => sum + el.offsetWidth, 0);
+    }
+
+    function tick() {
+      if (!paused) {
+        x -= speed;
+        // Once we've scrolled one full set width, snap back — perfectly seamless
+        if (Math.abs(x) >= setWidth) x += setWidth;
+        track.style.transform = 'translateX(' + x + 'px)';
+      }
+      requestAnimationFrame(tick);
+    }
+
+    // Wait for images to settle before measuring
+    window.addEventListener('load', () => { measureSet(); tick(); });
+    // Fallback if load already fired
+    if (document.readyState === 'complete') { measureSet(); tick(); }
+  })();
+
+
+  const secs = document.querySelectorAll('section[id]');
+  const nas  = document.querySelectorAll('.nav-links a');
+  const scrollFill = document.getElementById('scrollFill');
+
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    secs.forEach(s => { if (scrollY >= s.offsetTop - 90) cur = s.id; });
+    nas.forEach(a => {
+      const isActive = a.getAttribute('href') === '#' + cur;
+      a.classList.toggle('active', isActive);
+      a.style.color = isActive ? 'var(--violet)' : '';
+    });
+    const maxScroll = document.body.scrollHeight - window.innerHeight;
+    scrollFill.style.height = Math.min(scrollY / maxScroll * 100, 100) + '%';
+  });
+
+</script>
+</body>
+</html>
